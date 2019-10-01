@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tiling</title>
+  <link rel="stylesheet" href="../vendor/bootstrap/bootstrap.min.css">
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    .full-height {
+      height: 100%;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <script src="../vendor/jquery/jquery-3.3.1.slim.min.js"></script>
+  <script src="../vendor/popper/popper.min.js"></script>
+  <script src="../vendor/bootstrap/bootstrap.min.js"></script>
+  <script src="../vendor/paperjs/paper-full.js"></script>
+</head>
+<body>
+<div class="container-fluid full-height">
+  <div class="row full-height">
+    <div class="col-md-8 full-height">
+      <canvas id="drawArea" class="full-height"></canvas>
+    </div>
+    <div class="col-md-4">
+      <label for="bcdeLen">Length</label>
+      <input type="range" class="custom-range" id="bcdeLen" min="10" max="100" value="63">
+      <label for="angB">Angle B</label>
+      <input type="range" class="custom-range" id="angB" min="0" max="360" value="105"><br>
+      <img src="Prototile_p5-type8.png">
+      <img src="240px-Pentagonal_tiling_type_8_animation.jpg" height="240" width="240"/>
+    </div>
+  </div>
+</div>
+<script src="helper.js" type="module"></script>
+</body>
+</html>

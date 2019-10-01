@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Durden</title>
+  <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
+  <script src="vendor/jquery/jquery-3.3.1.slim.min.js"></script>
+  <script src="vendor/bootstrap/bootstrap.min.js"></script>
+  <script src="vendor/popper/popper.min.js"></script>
+  <script src="vendor/paperjs/paper-full.js"></script>
+  <script src="vendor/tweenjs/Tween.min.js"></script>
+  <script src="dist/durden.min.js"></script>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    #tilingContainer {
+      height: 100%;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body style="background-color: black;">
+<div id="tilingContainer"></div>
+<script type="module">
+var container = document.getElementById('tilingContainer');
+var tiler = new Durden.Durden(container, 10, 10);
+tiler.colorTilesPeriodic(Durden.Themes.RGB);
+tiler.transformTiles(10000, true);
+</script>
+</body>
+</html>
