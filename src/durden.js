@@ -175,6 +175,20 @@ class Durden {
   }
 
   /**
+   * Set the stroke (contour line) of all the tiles
+   *
+   * @param {Number} width
+   *  Stroke width
+   * @param {String} fillColor
+   *  Stroke color (in #rrggbb format)
+   */
+  setStroke(width, fillColor) {
+    this.tiling.getAllTiles().forEach((tile) => {
+      tile.setStroke(width, fillColor);
+    });
+  }
+
+  /**
    * Color the supertiles in the tiling randomly.
    *
    * @param {Array} colors

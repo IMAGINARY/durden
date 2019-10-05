@@ -75,6 +75,29 @@ export default class Tile {
   }
 
   /**
+   * Modify the tile's stroke (contour line)
+   *
+   * @param {Number} width
+   *  Stroke width
+   * @param {String} color
+   *  Stroke color (in #rrggbb format)
+   */
+  setStroke(width, color) {
+    this.path.strokeWidth = width;
+    this.path.strokeColor = color;
+  }
+
+  /**
+   * Set the inner color of the tile
+   *
+   * @param {String} color
+   *  Fill color (in #rrggbb format)
+   */
+  setColor(color) {
+    this.path.fillColor = color;
+  }
+
+  /**
    * Vertex A
    * @return {paper.Point}
    */

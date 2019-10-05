@@ -170,6 +170,22 @@ function () {
       }, duration).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(transform).repeat(Infinity).yoyo(true).start();
     }
     /**
+     * Set the stroke (contour line) of all the tiles
+     *
+     * @param {Number} width
+     *  Stroke width
+     * @param {String} fillColor
+     *  Stroke color (in #rrggbb format)
+     */
+
+  }, {
+    key: "setStroke",
+    value: function setStroke(width, fillColor) {
+      this.tiling.getAllTiles().forEach(function (tile) {
+        tile.setStroke(width, fillColor);
+      });
+    }
+    /**
      * Color the supertiles in the tiling randomly.
      *
      * @param {Array} colors
@@ -553,6 +569,33 @@ function () {
           angle: angle
         })));
       });
+    }
+    /**
+     * Modify the tile's stroke (contour line)
+     *
+     * @param {Number} width
+     *  Stroke width
+     * @param {String} color
+     *  Stroke color (in #rrggbb format)
+     */
+
+  }, {
+    key: "setStroke",
+    value: function setStroke(width, color) {
+      this.path.strokeWidth = width;
+      this.path.strokeColor = color;
+    }
+    /**
+     * Set the inner color of the tile
+     *
+     * @param {String} color
+     *  Fill color (in #rrggbb format)
+     */
+
+  }, {
+    key: "setColor",
+    value: function setColor(color) {
+      this.path.fillColor = color;
     }
     /**
      * Vertex A
