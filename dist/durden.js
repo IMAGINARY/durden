@@ -270,7 +270,7 @@ function () {
         last: 0
       }).to({
         last: tiles.length - 1
-      }, duration).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function (progress) {
+      }, duration).easing(TWEEN.Easing.Cubic.InOut).onUpdate(function (progress) {
         var last = Math.floor(progress.last);
 
         for (var i = shown; i <= last; i += 1) {

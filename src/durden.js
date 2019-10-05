@@ -91,7 +91,7 @@ class Durden {
     let shown = 0;
     return new TWEEN.Tween({ last: 0 })
       .to({ last: tiles.length - 1 }, duration)
-      .easing(TWEEN.Easing.Sinusoidal.InOut)
+      .easing(TWEEN.Easing.Cubic.InOut)
       .onUpdate((progress) => {
         const last = Math.floor(progress.last);
         for (let i = shown; i <= last; i += 1) {
