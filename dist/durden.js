@@ -33,10 +33,8 @@ function () {
     paper.view.applyMatrix = false;
     this.tiling = new _tiling["default"](n, m);
     this.bcdeLen = 50;
-    var angB = 134;
-    this.tiling.transform(this.bcdeLen, angB);
-    var centerTile = this.tiling.superTiles[Math.floor(this.tiling.n / 2)][Math.floor(this.tiling.m / 2)];
-    paper.view.setCenter(centerTile.group.bounds.getCenter());
+    var angB = _tiling["default"].MAX_B;
+    this.transformTiles(this.bcdeLen, angB, true);
     paper.view.update();
     paper.view.on('frame', function () {
       TWEEN.update();
@@ -144,30 +142,46 @@ function () {
      */
 
   }, {
-    key: "transformTiles",
-    value: function transformTiles(duration) {
+    key: "transformTilesAnimated",
+    value: function transformTilesAnimated(duration) {
       var _this = this;
 
       var rescale = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       var steps = [_tiling["default"].MIN_B, _tiling["default"].MIN_B + (_tiling["default"].MAX_B - _tiling["default"].MIN_B) / 4, _tiling["default"].MIN_B + (_tiling["default"].MAX_B - _tiling["default"].MIN_B) / 4 * 2, _tiling["default"].MIN_B + (_tiling["default"].MAX_B - _tiling["default"].MIN_B) / 4 * 3, _tiling["default"].MAX_B];
-
-      var transform = function transform(progress) {
-        _this.tiling.transform(_this.bcdeLen, progress.angle);
-
-        var bounds = _this.getBounds();
-
-        if (rescale) {
-          paper.view.setScaling(paper.view.getViewSize().width / bounds.width, paper.view.getViewSize().height / bounds.height);
-        }
-
-        paper.view.setCenter(bounds.getCenter());
-      };
-
       return new TWEEN.Tween({
         angle: steps[4]
       }).to({
         angle: steps[0]
-      }, duration).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(transform).repeat(Infinity).yoyo(true).start();
+      }, duration).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function (progress) {
+        _this.transformTiles(_this.bcdeLen, progress.angle, rescale);
+      }).repeat(Infinity).yoyo(true).start();
+    }
+    /**
+     * Transforms the shape of the tiles and adjusts the view.
+     *
+     * @param {Number} segmentLen
+     *  Length of the segments. Only the E-A segment has a different length.
+     * @param {Number} angB
+     *  Angle for vertex B (in degrees)
+     * @return {*}
+     */
+
+  }, {
+    key: "transformTiles",
+    value: function transformTiles(segmentLen, angB) {
+      var rescale = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+      this.tiling.transform(segmentLen, angB);
+      var bounds = this.getBounds();
+
+      if (rescale) {
+        if (paper.view.getViewSize().width > bounds.width || paper.view.getViewSize().height > bounds.height) {
+          paper.view.setScaling(Math.max(paper.view.getViewSize().width / bounds.width, paper.view.getViewSize().height / bounds.height));
+        } else {
+          paper.view.setScaling(Math.max(paper.view.getViewSize().width / bounds.width, paper.view.getViewSize().height / bounds.height));
+        }
+      }
+
+      paper.view.setCenter(bounds.getCenter());
     }
     /**
      * Set the stroke (contour line) of all the tiles

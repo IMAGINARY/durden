@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
   <title>Durden</title>
   <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css">
   <script src="vendor/jquery/jquery-3.3.1.slim.min.js"></script>
@@ -33,7 +34,7 @@
 var container = document.getElementById('tilingContainer');
 var tiler = new Durden.Durden(container, 10, 10);
 tiler.colorTilesPeriodic(Durden.Themes.RGB);
-tiler.transformTiles(10000, true);
+tiler.transformTilesAnimated(10000, false);
 </script>
 </body>
 </html>

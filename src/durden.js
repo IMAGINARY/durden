@@ -20,12 +20,8 @@ class Durden {
     paper.view.applyMatrix = false;
     this.tiling = new Tiling(n, m);
     this.bcdeLen = 50;
-    const angB = 134;
-    this.tiling.transform(this.bcdeLen, angB);
-    const centerTile = this.tiling.superTiles[
-      Math.floor(this.tiling.n / 2)][Math.floor(this.tiling.m / 2)
-    ];
-    paper.view.setCenter(centerTile.group.bounds.getCenter());
+    const angB = Tiling.MAX_B;
+    this.transformTiles(this.bcdeLen, angB, true);
     paper.view.update();
     paper.view.on('frame', () => { TWEEN.update(); });
   }
@@ -144,7 +140,7 @@ class Durden {
    *  Whether to rescale the animation viewport to completely fill the container
    * @return {*}
    */
-  transformTiles(duration, rescale = false) {
+  transformTilesAnimated(duration, rescale = false) {
     const steps = [
       Tiling.MIN_B,
       Tiling.MIN_B + (Tiling.MAX_B - Tiling.MIN_B) / 4,
@@ -153,25 +149,44 @@ class Durden {
       Tiling.MAX_B,
     ];
 
-    const transform = (progress) => {
-      this.tiling.transform(this.bcdeLen, progress.angle);
-      const bounds = this.getBounds();
-      if (rescale) {
-        paper.view.setScaling(
-          paper.view.getViewSize().width / bounds.width,
-          paper.view.getViewSize().height / bounds.height
-        );
-      }
-      paper.view.setCenter(bounds.getCenter());
-    };
-
     return new TWEEN.Tween({ angle: steps[4] })
       .to({ angle: steps[0] }, duration)
       .easing(TWEEN.Easing.Sinusoidal.InOut)
-      .onUpdate(transform)
+      .onUpdate((progress) => {
+        this.transformTiles(this.bcdeLen, progress.angle, rescale);
+      })
       .repeat(Infinity)
       .yoyo(true)
       .start();
+  }
+
+  /**
+   * Transforms the shape of the tiles and adjusts the view.
+   *
+   * @param {Number} segmentLen
+   *  Length of the segments. Only the E-A segment has a different length.
+   * @param {Number} angB
+   *  Angle for vertex B (in degrees)
+   * @return {*}
+   */
+  transformTiles(segmentLen, angB, rescale = false) {
+    this.tiling.transform(segmentLen, angB);
+    const bounds = this.getBounds();
+    if (rescale) {
+      if ((paper.view.getViewSize().width > bounds.width)
+      || (paper.view.getViewSize().height > bounds.height)) {
+        paper.view.setScaling(Math.max(
+          paper.view.getViewSize().width / bounds.width,
+          paper.view.getViewSize().height / bounds.height
+        ));
+      } else {
+        paper.view.setScaling(Math.max(
+          paper.view.getViewSize().width / bounds.width,
+          paper.view.getViewSize().height / bounds.height
+        ));
+      }
+    }
+    paper.view.setCenter(bounds.getCenter());
   }
 
   /**
