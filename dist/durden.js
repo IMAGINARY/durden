@@ -23,8 +23,12 @@ function () {
    *  Number of supertiles horizontally
    * @param {Number} m
    *  Number of supertiles vertically
+   * @param {Number} angle
+   *  Starting angle (in Durden.MIN_ANGLE, Durden.MAX_ANGLE range)
    */
   function Durden(container, n, m) {
+    var angle = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : Durden.MAX_ANGLE;
+
     _classCallCheck(this, Durden);
 
     this.canvas = window.document.createElement('canvas');
@@ -33,7 +37,7 @@ function () {
     paper.view.applyMatrix = false;
     this.tiling = new _tiling["default"](n, m);
     this.bcdeLen = 50;
-    var angB = _tiling["default"].MAX_B;
+    var angB = angle;
     this.transformTiles(this.bcdeLen, angB, true);
     paper.view.update();
     paper.view.on('frame', function () {
@@ -137,9 +141,9 @@ function () {
      * @param {Number} duration
      *  Length of the animation
      * @param {Number} angleFrom
-     *  Starting angle (in range Tiling.MIN_B, Tiling.MAX_B)
+     *  Starting angle (in range Durden.MIN_ANGLE, Durden.MAX_ANGLE)
      * @param {Number} angleTo
-     *  Ending angle (in range Tiling.MIN_B, Tiling.MAX_B)
+     *  Ending angle (in range Durden.MIN_ANGLE, Durden.MAX_ANGLE)
      *  Whether to rescale the animation viewport to completely fill the container
      * @param {boolean} rescale
      *  If true the tiling will be stretched to fill the container
@@ -152,8 +156,8 @@ function () {
     value: function transformTilesAnimated(duration) {
       var _this = this;
 
-      var angleFrom = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _tiling["default"].MIN_B;
-      var angleTo = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _tiling["default"].MAX_B;
+      var angleFrom = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Durden.MIN_ANGLE;
+      var angleTo = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Durden.MAX_ANGLE;
       var rescale = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
       return new TWEEN.Tween({
         angle: angleFrom

@@ -12,15 +12,17 @@ class Durden {
    *  Number of supertiles horizontally
    * @param {Number} m
    *  Number of supertiles vertically
+   * @param {Number} angle
+   *  Starting angle (in Durden.MIN_ANGLE, Durden.MAX_ANGLE range)
    */
-  constructor(container, n, m) {
+  constructor(container, n, m, angle = Durden.MAX_ANGLE) {
     this.canvas = window.document.createElement('canvas');
     container.appendChild(this.canvas);
     paper.setup(this.canvas);
     paper.view.applyMatrix = false;
     this.tiling = new Tiling(n, m);
     this.bcdeLen = 50;
-    const angB = Tiling.MAX_B;
+    const angB = angle;
     this.transformTiles(this.bcdeLen, angB, true);
     paper.view.update();
     paper.view.on('frame', () => { TWEEN.update(); });
@@ -137,9 +139,9 @@ class Durden {
    * @param {Number} duration
    *  Length of the animation
    * @param {Number} angleFrom
-   *  Starting angle (in range Tiling.MIN_B, Tiling.MAX_B)
+   *  Starting angle (in range Durden.MIN_ANGLE, Durden.MAX_ANGLE)
    * @param {Number} angleTo
-   *  Ending angle (in range Tiling.MIN_B, Tiling.MAX_B)
+   *  Ending angle (in range Durden.MIN_ANGLE, Durden.MAX_ANGLE)
    *  Whether to rescale the animation viewport to completely fill the container
    * @param {boolean} rescale
    *  If true the tiling will be stretched to fill the container
@@ -148,8 +150,8 @@ class Durden {
    */
   transformTilesAnimated(
     duration,
-    angleFrom = Tiling.MIN_B,
-    angleTo = Tiling.MAX_B,
+    angleFrom = Durden.MIN_ANGLE,
+    angleTo = Durden.MAX_ANGLE,
     rescale = false
   ) {
     return new TWEEN.Tween({ angle: angleFrom })
