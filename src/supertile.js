@@ -59,6 +59,19 @@ export default class SuperTile {
   }
 
   /**
+   * Sets visibility of the supertile
+   *
+   * @param {boolean} visible
+   *  True if it should be made visible, false to hide it.
+   */
+  setVisibility(visible) {
+    this.tile1.setVisibility(visible);
+    this.tile2.setVisibility(visible);
+    this.tile3.setVisibility(visible);
+    this.tile4.setVisibility(visible);
+  }
+
+  /**
    * North vertex
    * @return {paper.Point}
    */

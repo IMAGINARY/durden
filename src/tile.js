@@ -98,6 +98,16 @@ export default class Tile {
   }
 
   /**
+   * Sets visibility of the tile
+   *
+   * @param {boolean} visible
+   *  True if it should be made visible, false to hide it.
+   */
+  setVisibility(visible) {
+    this.path.opacity = visible ? 1 : 0;
+  }
+
+  /**
    * Vertex A
    * @return {paper.Point}
    */

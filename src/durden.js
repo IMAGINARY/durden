@@ -22,8 +22,7 @@ class Durden {
     paper.view.applyMatrix = false;
     this.tiling = new Tiling(n, m);
     this.bcdeLen = 50;
-    const angB = angle;
-    this.transformTiles(this.bcdeLen, angB, true);
+    this.transformTiles(this.bcdeLen, angle, true);
     paper.view.update();
     paper.view.on('frame', () => { TWEEN.update(); });
   }
@@ -33,8 +32,19 @@ class Durden {
    * @return {Array}
    */
   getShuffledTiles() {
-    const tiles = this.tiling.getAllTiles();
-    let currentIndex = tiles.length;
+    return Durden.shuffle(this.tiling.getAllTiles());
+  }
+
+  /**
+   * Returns a randomly shuffled list of all the tiles in the tiling.
+   * @return {Array}
+   */
+  getShuffledSuperTiles() {
+    return Durden.shuffle(this.tiling.getAllSuperTiles());
+  }
+
+  static shuffle(anArray) {
+    let currentIndex = anArray.length;
 
     // While there remain elements to shuffle...
     while (currentIndex !== 0) {
@@ -43,12 +53,12 @@ class Durden {
       currentIndex -= 1;
 
       // And swap it with the current element.
-      const temporaryValue = tiles[currentIndex];
-      tiles[currentIndex] = tiles[randomIndex];
-      tiles[randomIndex] = temporaryValue;
+      const temporaryValue = anArray[currentIndex];
+      anArray[currentIndex] = anArray[randomIndex];
+      anArray[randomIndex] = temporaryValue;
     }
 
-    return tiles;
+    return anArray;
   }
 
   /**
@@ -60,7 +70,43 @@ class Durden {
    *  An instance of Tween (check tweenjs docs)
    */
   showTilesRandom(duration) {
-    return Durden.showTiles(this.getShuffledTiles(), duration);
+    return Durden.setTileVisibilityAnimated(this.getShuffledTiles(), true, duration);
+  }
+
+  /**
+   * Shows supertiles progressively in random order
+   *
+   * @param {Number} duration
+   *  Length of the animation in seconds
+   * @return {Tween}
+   *  An instance of Tween (check tweenjs docs)
+   */
+  showSuperTilesRandom(duration) {
+    return Durden.setTileVisibilityAnimated(this.getShuffledSuperTiles(), true, duration);
+  }
+
+  /**
+   * Shows tiles progressively in random order
+   *
+   * @param {Number} duration
+   *  Length of the animation in seconds
+   * @return {Tween}
+   *  An instance of Tween (check tweenjs docs)
+   */
+  hideTilesRandom(duration) {
+    return Durden.setTileVisibilityAnimated(this.getShuffledTiles(), false, duration);
+  }
+
+  /**
+   * Hides supertiles progressively in random order
+   *
+   * @param {Number} duration
+   *  Length of the animation in seconds
+   * @return {Tween}
+   *  An instance of Tween (check tweenjs docs)
+   */
+  hideSuperTilesRandom(duration) {
+    return Durden.setTileVisibilityAnimated(this.getShuffledSuperTiles(), false, duration);
   }
 
   /**
@@ -72,32 +118,78 @@ class Durden {
    *  An instance of Tween (check tweenjs docs)
    */
   showTilesOrdered(duration) {
-    return Durden.showTiles(this.tiling.getAllTiles(), duration);
+    return Durden.setTileVisibilityAnimated(this.tiling.getAllTiles(), true, duration);
   }
 
   /**
-   * Show a (ordered) list of tiles progressively
+   * Hides tiles progressively in order
    *
-   * @param {Array} tiles
-   *  Ordered list of tiles to show
-   * @param duration
+   * @param {Number} duration
    *  Length of the animation in seconds
    * @return {Tween}
    *  An instance of Tween (check tweenjs docs)
    */
-  static showTiles(tiles, duration) {
-    tiles.forEach((tile) => {
-      tile.path.opacity = 0;
-    });
+  hideTilesOrdered(duration) {
+    return Durden.setTileVisibilityAnimated(this.tiling.getAllTiles(), false, duration);
+  }
 
+  /**
+   * Shows supertiles progressively in order
+   *
+   * @param {Number} duration
+   *  Length of the animation in seconds
+   * @return {Tween}
+   *  An instance of Tween (check tweenjs docs)
+   */
+  showSuperTilesOrdered(duration) {
+    return Durden.setTileVisibilityAnimated(this.tiling.getAllSuperTiles(), true, duration);
+  }
+
+  /**
+   * Hides supertiles progressively in order
+   *
+   * @param {Number} duration
+   *  Length of the animation in seconds
+   * @return {Tween}
+   *  An instance of Tween (check tweenjs docs)
+   */
+  hideSuperTilesOrdered(duration) {
+    return Durden.setTileVisibilityAnimated(this.tiling.getAllSuperTiles(), false, duration);
+  }
+
+  /**
+   * Set the visibility of all tiles
+   *
+   * @param {boolean} visibility
+   *  True if they should be shown, false if hidden
+   */
+  setTileVisibility(visibility) {
+    this.tiling.getAllTiles().forEach((tile) => {
+      tile.path.opacity = visibility ? 1 : 0;
+    });
+  }
+
+  /**
+   * Change the visibility of an (ordered) list of tiles progressively
+   *
+   * @param {Array} tiles
+   *  Ordered list of tiles or supertiles to show
+   * @param {boolean} visibility
+   *  True if tiles should be made visible
+   * @param {Number} duration
+   *  Length of the animation in seconds
+   * @return {Tween}
+   *  An instance of Tween (check tweenjs docs)
+   */
+  static setTileVisibilityAnimated(tiles, visibility, duration) {
     let shown = 0;
     return new TWEEN.Tween({ last: 0 })
       .to({ last: tiles.length - 1 }, duration)
-      .easing(TWEEN.Easing.Cubic.InOut)
+      .easing(TWEEN.Easing.Cubic.In)
       .onUpdate((progress) => {
         const last = Math.floor(progress.last);
         for (let i = shown; i <= last; i += 1) {
-          tiles[i].path.opacity = 1;
+          tiles[i].setVisibility(visibility);
         }
         shown = last;
       })
@@ -172,6 +264,8 @@ class Durden {
    *  Length of the segments. Only the E-A segment has a different length.
    * @param {Number} angB
    *  Angle for vertex B (in degrees)
+   * @param {boolean} rescale
+   *  Whether the tiling should be rescaled to fill the container
    */
   transformTiles(segmentLen, angB, rescale = false) {
     this.tiling.transform(segmentLen, angB);
@@ -260,6 +354,9 @@ class Durden {
   }
 }
 
+Durden.MAX_ANGLE = Tiling.MAX_B;
+Durden.MIN_ANGLE = Tiling.MIN_B;
+
 Durden.Themes = {
   RGB: [
     '#ff9999',
@@ -307,6 +404,6 @@ Durden.Themes = {
 module.exports = {
   Durden,
   Themes: Durden.Themes,
-  MIN_ANGLE: Tiling.MIN_B,
-  MAX_ANGLE: Tiling.MAX_B,
+  MIN_ANGLE: Durden.MIN_ANGLE,
+  MAX_ANGLE: Durden.MAX_ANGLE,
 };

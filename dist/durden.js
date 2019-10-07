@@ -37,8 +37,7 @@ function () {
     paper.view.applyMatrix = false;
     this.tiling = new _tiling["default"](n, m);
     this.bcdeLen = 50;
-    var angB = angle;
-    this.transformTiles(this.bcdeLen, angB, true);
+    this.transformTiles(this.bcdeLen, angle, true);
     paper.view.update();
     paper.view.on('frame', function () {
       TWEEN.update();
@@ -53,21 +52,21 @@ function () {
   _createClass(Durden, [{
     key: "getShuffledTiles",
     value: function getShuffledTiles() {
-      var tiles = this.tiling.getAllTiles();
-      var currentIndex = tiles.length; // While there remain elements to shuffle...
-
-      while (currentIndex !== 0) {
-        // Pick a remaining element...
-        var randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1; // And swap it with the current element.
-
-        var temporaryValue = tiles[currentIndex];
-        tiles[currentIndex] = tiles[randomIndex];
-        tiles[randomIndex] = temporaryValue;
-      }
-
-      return tiles;
+      return Durden.shuffle(this.tiling.getAllTiles());
     }
+    /**
+     * Returns a randomly shuffled list of all the tiles in the tiling.
+     * @return {Array}
+     */
+
+  }, {
+    key: "getShuffledSuperTiles",
+    value: function getShuffledSuperTiles() {
+      return Durden.shuffle(this.tiling.getAllSuperTiles());
+    }
+  }, {
+    key: "showTilesRandom",
+
     /**
      * Shows the tiles progressively in random order
      *
@@ -76,11 +75,50 @@ function () {
      * @return {Tween}
      *  An instance of Tween (check tweenjs docs)
      */
+    value: function showTilesRandom(duration) {
+      return Durden.setTileVisibilityAnimated(this.getShuffledTiles(), true, duration);
+    }
+    /**
+     * Shows supertiles progressively in random order
+     *
+     * @param {Number} duration
+     *  Length of the animation in seconds
+     * @return {Tween}
+     *  An instance of Tween (check tweenjs docs)
+     */
 
   }, {
-    key: "showTilesRandom",
-    value: function showTilesRandom(duration) {
-      return Durden.showTiles(this.getShuffledTiles(), duration);
+    key: "showSuperTilesRandom",
+    value: function showSuperTilesRandom(duration) {
+      return Durden.setTileVisibilityAnimated(this.getShuffledSuperTiles(), true, duration);
+    }
+    /**
+     * Shows tiles progressively in random order
+     *
+     * @param {Number} duration
+     *  Length of the animation in seconds
+     * @return {Tween}
+     *  An instance of Tween (check tweenjs docs)
+     */
+
+  }, {
+    key: "hideTilesRandom",
+    value: function hideTilesRandom(duration) {
+      return Durden.setTileVisibilityAnimated(this.getShuffledTiles(), false, duration);
+    }
+    /**
+     * Hides supertiles progressively in random order
+     *
+     * @param {Number} duration
+     *  Length of the animation in seconds
+     * @return {Tween}
+     *  An instance of Tween (check tweenjs docs)
+     */
+
+  }, {
+    key: "hideSuperTilesRandom",
+    value: function hideSuperTilesRandom(duration) {
+      return Durden.setTileVisibilityAnimated(this.getShuffledSuperTiles(), false, duration);
     }
     /**
      * Shows the tiles progressively in order
@@ -94,14 +132,72 @@ function () {
   }, {
     key: "showTilesOrdered",
     value: function showTilesOrdered(duration) {
-      return Durden.showTiles(this.tiling.getAllTiles(), duration);
+      return Durden.setTileVisibilityAnimated(this.tiling.getAllTiles(), true, duration);
     }
     /**
-     * Show a (ordered) list of tiles progressively
+     * Hides tiles progressively in order
+     *
+     * @param {Number} duration
+     *  Length of the animation in seconds
+     * @return {Tween}
+     *  An instance of Tween (check tweenjs docs)
+     */
+
+  }, {
+    key: "hideTilesOrdered",
+    value: function hideTilesOrdered(duration) {
+      return Durden.setTileVisibilityAnimated(this.tiling.getAllTiles(), false, duration);
+    }
+    /**
+     * Shows supertiles progressively in order
+     *
+     * @param {Number} duration
+     *  Length of the animation in seconds
+     * @return {Tween}
+     *  An instance of Tween (check tweenjs docs)
+     */
+
+  }, {
+    key: "showSuperTilesOrdered",
+    value: function showSuperTilesOrdered(duration) {
+      return Durden.setTileVisibilityAnimated(this.tiling.getAllSuperTiles(), true, duration);
+    }
+    /**
+     * Hides supertiles progressively in order
+     *
+     * @param {Number} duration
+     *  Length of the animation in seconds
+     * @return {Tween}
+     *  An instance of Tween (check tweenjs docs)
+     */
+
+  }, {
+    key: "hideSuperTilesOrdered",
+    value: function hideSuperTilesOrdered(duration) {
+      return Durden.setTileVisibilityAnimated(this.tiling.getAllSuperTiles(), false, duration);
+    }
+    /**
+     * Set the visibility of all tiles
+     *
+     * @param {boolean} visibility
+     *  True if they should be shown, false if hidden
+     */
+
+  }, {
+    key: "setTileVisibility",
+    value: function setTileVisibility(visibility) {
+      this.tiling.getAllTiles().forEach(function (tile) {
+        tile.path.opacity = visibility ? 1 : 0;
+      });
+    }
+    /**
+     * Change the visibility of an (ordered) list of tiles progressively
      *
      * @param {Array} tiles
-     *  Ordered list of tiles to show
-     * @param duration
+     *  Ordered list of tiles or supertiles to show
+     * @param {boolean} visibility
+     *  True if tiles should be made visible
+     * @param {Number} duration
      *  Length of the animation in seconds
      * @return {Tween}
      *  An instance of Tween (check tweenjs docs)
@@ -174,6 +270,8 @@ function () {
      *  Length of the segments. Only the E-A segment has a different length.
      * @param {Number} angB
      *  Angle for vertex B (in degrees)
+     * @param {boolean} rescale
+     *  Whether the tiling should be rescaled to fill the container
      */
 
   }, {
@@ -270,21 +368,35 @@ function () {
       });
     }
   }], [{
-    key: "showTiles",
-    value: function showTiles(tiles, duration) {
-      tiles.forEach(function (tile) {
-        tile.path.opacity = 0;
-      });
+    key: "shuffle",
+    value: function shuffle(anArray) {
+      var currentIndex = anArray.length; // While there remain elements to shuffle...
+
+      while (currentIndex !== 0) {
+        // Pick a remaining element...
+        var randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1; // And swap it with the current element.
+
+        var temporaryValue = anArray[currentIndex];
+        anArray[currentIndex] = anArray[randomIndex];
+        anArray[randomIndex] = temporaryValue;
+      }
+
+      return anArray;
+    }
+  }, {
+    key: "setTileVisibilityAnimated",
+    value: function setTileVisibilityAnimated(tiles, visibility, duration) {
       var shown = 0;
       return new TWEEN.Tween({
         last: 0
       }).to({
         last: tiles.length - 1
-      }, duration).easing(TWEEN.Easing.Cubic.InOut).onUpdate(function (progress) {
+      }, duration).easing(TWEEN.Easing.Cubic.In).onUpdate(function (progress) {
         var last = Math.floor(progress.last);
 
         for (var i = shown; i <= last; i += 1) {
-          tiles[i].path.opacity = 1;
+          tiles[i].setVisibility(visibility);
         }
 
         shown = last;
@@ -295,6 +407,8 @@ function () {
   return Durden;
 }();
 
+Durden.MAX_ANGLE = _tiling["default"].MAX_B;
+Durden.MIN_ANGLE = _tiling["default"].MIN_B;
 Durden.Themes = {
   RGB: ['#ff9999', '#99ff99', '#9999ff', '#ff99ff'],
   Spring: ['#54678C', '#9BDAF2', '#F2C12E', '#F2E1C2', '#D95252'],
@@ -306,8 +420,8 @@ Durden.Themes = {
 module.exports = {
   Durden: Durden,
   Themes: Durden.Themes,
-  MIN_ANGLE: _tiling["default"].MIN_B,
-  MAX_ANGLE: _tiling["default"].MAX_B
+  MIN_ANGLE: Durden.MIN_ANGLE,
+  MAX_ANGLE: Durden.MAX_ANGLE
 };
 
 },{"./tiling":4}],2:[function(require,module,exports){
@@ -378,6 +492,21 @@ function () {
       this.tile4.path.rotate(this.tile3.vE.subtract(this.tile3.vA).getAngle() - this.tile4.vE.subtract(this.tile4.vA).getAngle()); // Move vertex A of tile4 to vertex A of tile3
 
       this.tile4.path.translate(this.tile3.vA.subtract(this.tile4.vA));
+    }
+    /**
+     * Sets visibility of the supertile
+     *
+     * @param {boolean} visible
+     *  True if it should be made visible, false to hide it.
+     */
+
+  }, {
+    key: "setVisibility",
+    value: function setVisibility(visible) {
+      this.tile1.setVisibility(visible);
+      this.tile2.setVisibility(visible);
+      this.tile3.setVisibility(visible);
+      this.tile4.setVisibility(visible);
     }
     /**
      * North vertex
@@ -622,6 +751,18 @@ function () {
     key: "setColor",
     value: function setColor(color) {
       this.path.fillColor = color;
+    }
+    /**
+     * Sets visibility of the tile
+     *
+     * @param {boolean} visible
+     *  True if it should be made visible, false to hide it.
+     */
+
+  }, {
+    key: "setVisibility",
+    value: function setVisibility(visible) {
+      this.path.opacity = visible ? 1 : 0;
     }
     /**
      * Vertex A
