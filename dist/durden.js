@@ -301,7 +301,9 @@ Durden.Themes = {
 };
 module.exports = {
   Durden: Durden,
-  Themes: Durden.Themes
+  Themes: Durden.Themes,
+  MIN_ANGLE: _tiling["default"].MIN_B,
+  MAX_ANGLE: _tiling["default"].MAX_B
 };
 
 },{"./tiling":4}],2:[function(require,module,exports){

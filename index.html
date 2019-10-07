@@ -34,7 +34,7 @@
 var container = document.getElementById('tilingContainer');
 var tiler = new Durden.Durden(container, 10, 10);
 tiler.colorTilesPeriodic(Durden.Themes.RGB);
-tiler.transformTilesAnimated(10000, false);
+tiler.transformTilesAnimated(10000, Durden.MAX_ANGLE, Durden.MIN_ANGLE, true);
 </script>
 </body>
 </html>

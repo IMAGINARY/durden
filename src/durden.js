@@ -305,4 +305,6 @@ Durden.Themes = {
 module.exports = {
   Durden,
   Themes: Durden.Themes,
+  MIN_ANGLE: Tiling.MIN_B,
+  MAX_ANGLE: Tiling.MAX_B,
 };
