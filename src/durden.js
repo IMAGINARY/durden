@@ -136,21 +136,24 @@ class Durden {
    *
    * @param {Number} duration
    *  Length of the animation
-   * @param {Boolean} rescale
+   * @param {Number} angleFrom
+   *  Starting angle (in range Tiling.MIN_B, Tiling.MAX_B)
+   * @param {Number} angleTo
+   *  Ending angle (in range Tiling.MIN_B, Tiling.MAX_B)
    *  Whether to rescale the animation viewport to completely fill the container
-   * @return {*}
+   * @param {boolean} rescale
+   *  If true the tiling will be stretched to fill the container
+   * @return {Tween}
+   *  An instance of Tween (check tweenjs docs)
    */
-  transformTilesAnimated(duration, rescale = false) {
-    const steps = [
-      Tiling.MIN_B,
-      Tiling.MIN_B + (Tiling.MAX_B - Tiling.MIN_B) / 4,
-      Tiling.MIN_B + ((Tiling.MAX_B - Tiling.MIN_B) / 4) * 2,
-      Tiling.MIN_B + ((Tiling.MAX_B - Tiling.MIN_B) / 4) * 3,
-      Tiling.MAX_B,
-    ];
-
-    return new TWEEN.Tween({ angle: steps[4] })
-      .to({ angle: steps[0] }, duration)
+  transformTilesAnimated(
+    duration,
+    angleFrom = Tiling.MIN_B,
+    angleTo = Tiling.MAX_B,
+    rescale = false
+  ) {
+    return new TWEEN.Tween({ angle: angleFrom })
+      .to({ angle: angleTo }, duration)
       .easing(TWEEN.Easing.Sinusoidal.InOut)
       .onUpdate((progress) => {
         this.transformTiles(this.bcdeLen, progress.angle, rescale);
@@ -167,7 +170,6 @@ class Durden {
    *  Length of the segments. Only the E-A segment has a different length.
    * @param {Number} angB
    *  Angle for vertex B (in degrees)
-   * @return {*}
    */
   transformTiles(segmentLen, angB, rescale = false) {
     this.tiling.transform(segmentLen, angB);

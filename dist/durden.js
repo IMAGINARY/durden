@@ -136,9 +136,15 @@ function () {
      *
      * @param {Number} duration
      *  Length of the animation
-     * @param {Boolean} rescale
+     * @param {Number} angleFrom
+     *  Starting angle (in range Tiling.MIN_B, Tiling.MAX_B)
+     * @param {Number} angleTo
+     *  Ending angle (in range Tiling.MIN_B, Tiling.MAX_B)
      *  Whether to rescale the animation viewport to completely fill the container
-     * @return {*}
+     * @param {boolean} rescale
+     *  If true the tiling will be stretched to fill the container
+     * @return {Tween}
+     *  An instance of Tween (check tweenjs docs)
      */
 
   }, {
@@ -146,12 +152,13 @@ function () {
     value: function transformTilesAnimated(duration) {
       var _this = this;
 
-      var rescale = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      var steps = [_tiling["default"].MIN_B, _tiling["default"].MIN_B + (_tiling["default"].MAX_B - _tiling["default"].MIN_B) / 4, _tiling["default"].MIN_B + (_tiling["default"].MAX_B - _tiling["default"].MIN_B) / 4 * 2, _tiling["default"].MIN_B + (_tiling["default"].MAX_B - _tiling["default"].MIN_B) / 4 * 3, _tiling["default"].MAX_B];
+      var angleFrom = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _tiling["default"].MIN_B;
+      var angleTo = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _tiling["default"].MAX_B;
+      var rescale = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
       return new TWEEN.Tween({
-        angle: steps[4]
+        angle: angleFrom
       }).to({
-        angle: steps[0]
+        angle: angleTo
       }, duration).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function (progress) {
         _this.transformTiles(_this.bcdeLen, progress.angle, rescale);
       }).repeat(Infinity).yoyo(true).start();
@@ -163,7 +170,6 @@ function () {
      *  Length of the segments. Only the E-A segment has a different length.
      * @param {Number} angB
      *  Angle for vertex B (in degrees)
-     * @return {*}
      */
 
   }, {
