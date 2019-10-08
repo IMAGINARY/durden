@@ -1,8 +1,8 @@
 {
   "name": "@imaginary-maths/durden",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Pentagonal tiling animation",
-  "main": "dist/durden.js",
+  "main": "dist/durden.min.js",
   "repository": "https://github.com/IMAGINARY/durden.git",
   "author": "Eric Londaits <eric.londaits@imaginary.org>",
   "license": "MIT",
