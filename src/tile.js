@@ -32,6 +32,7 @@ export default class Tile {
     this.path.fillColor = fillColor;
     this.path.strokeColor = '#999999';
     this.path.strokeWidth = 1;
+    this.path.strokeJoin = 'bevel';
 
     for (let i = 0; i < 5; i += 1) {
       this.path.add(new paper.Point(0, 0));
